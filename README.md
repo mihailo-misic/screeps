@@ -1,10 +1,10 @@
 # Screeps scripts
-These are my scripts for my [screeps](https://screeps.com).
-<br>
+These are the scripts for my [screeps](https://screeps.com).
+<br><br>
 
 ## Requirements
-- Node + npm
-- Grunt-cli
+- [Node + npm](https://nodejs.org)
+- [Grunt](https://gruntjs.com/getting-started)
 
 ## Setup
 Copy the Gruntfile example
