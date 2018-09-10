@@ -3,7 +3,7 @@ const startUpgrading = require('role.upgrader');
 // Builders: Builds > Upgrades
 module.exports = {
   run: function (creep) {
-    creep.checkEnergyOr('🚧 Build');
+    creep.checkEnergyOr('🏗 Build');
 
     if (creep.memory.working) {
       let targets = creep.room.find(FIND_CONSTRUCTION_SITES);

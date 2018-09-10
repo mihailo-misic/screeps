@@ -5,21 +5,16 @@ const harvester = require('role.harvester');
 const builder = require('role.builder');
 const upgrader = require('role.upgrader');
 const repairer = require('role.repairer');
+const miner = require('role.miner');
+const courier = require('role.courier');
 
 const pop = require('population');
 const stats = require('stats');
 
-let CREEP_LIMITS = {
-  harvesters: 4,
-  builders  : 2,
-  upgraders : 1,
-  repairers : 0,
-};
-
 module.exports.loop = function () {
   // Population management.
   pop.mourn();
-  pop.keep(Game.spawns['Spawn1'], CREEP_LIMITS);
+  pop.keep(Game.spawns['Spawn1']);
 
   // Make em work!
   for (let name in Game.creeps) {
@@ -36,6 +31,12 @@ module.exports.loop = function () {
         break;
       case 'repairer':
         repairer.run(creep);
+        break;
+      case 'miner':
+        miner.run(creep);
+        break;
+      case 'courier':
+        courier.run(creep);
         break;
     }
   }
