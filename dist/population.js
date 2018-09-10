@@ -47,11 +47,11 @@ module.exports = {
     if (storage && containers === sources && lvl >= 4) {
       limits = {
         harvesters: 0,
-        builders  : 3,
+        builders  : 2,
         upgraders : 1,
         repairers : 1,
         miners    : sources,
-        couriers  : 1,
+        couriers  : 2,
       }
     }
 
