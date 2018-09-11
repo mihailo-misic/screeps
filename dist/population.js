@@ -19,12 +19,13 @@ module.exports = {
     }
   },
 
-  keep: function (spawn) {
+  breedFrom: function (spawn) {
     const energy = spawn.room.energyCapacityAvailable;
-    const sources = spawn.room.find(FIND_SOURCES).length;
-    const storage = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_STORAGE }).length;
-    const containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER }).length;
-    const lvl = Math.floor((energy - 300) / 250);
+    const sources = spawn.room.find(FIND_SOURCES);
+    const storage = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_STORAGE });
+    const containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
+    let lvl = Math.floor((energy - 300) / 250);
+    lvl = lvl > 4 ? 4 : lvl;
 
     let workParts = Array(2 + lvl).fill(WORK);
     let carryParts = Array(1 + lvl).fill(CARRY);
@@ -44,40 +45,72 @@ module.exports = {
     if (lvl >= 3) {
       limits.builders = 1;
     }
-    if (storage && containers === sources && lvl >= 4) {
+    if (storage.length && containers.length === sources.length && lvl >= 4) {
       limits = {
         harvesters: 0,
         builders  : 2,
         upgraders : 1,
-        repairers : 1,
-        miners    : sources,
+        repairers : 0,
+        miners    : sources.length,
         couriers  : 2,
-      }
+      };
     }
 
-    // Constructing generic body and its cost
-    let genericBody = [...workParts, ...carryParts, ...moveParts];
+    // Constructing bodies
+    const genericBody = [...workParts, ...carryParts, ...moveParts];
     const minerBody = Array(5).fill(WORK).concat(Array(3).fill(MOVE));
-    const partMultiplier = Math.floor(energy / 3 / 50);
+    const partMultiplier = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
     const courierBody = Array(partMultiplier * 2).fill(CARRY).concat(Array(partMultiplier).fill(MOVE));
-
-    let cost = 0;
-    genericBody.forEach(p => p === WORK ? cost += 100 : cost += 50);
-    let minerCost = 0;
-    minerBody.forEach(p => p === WORK ? minerCost += 100 : minerCost += 50);
-    let courierCost = 0;
-    courierBody.forEach(p => p === WORK ? courierCost += 100 : courierCost += 50);
+    const reserverBody = Array(2).fill(CLAIM).concat(Array(2).fill(MOVE));
+    // Calculating their cost
+    const genericCost = calculateCost(genericBody); // up to 1300
+    const minerCost = calculateCost(minerBody); // 650
+    const courierCost = calculateCost(courierBody); // 900
+    const reserverCost = calculateCost(reserverBody); // 1300
 
     // Count of all sie creeps.
     const harvesters = _.filter(Game.creeps, c => c.memory.role === 'harvester').length;
     const builders = _.filter(Game.creeps, c => c.memory.role === 'builder').length;
     const upgraders = _.filter(Game.creeps, c => c.memory.role === 'upgrader').length;
     const repairers = _.filter(Game.creeps, c => c.memory.role === 'repairer').length;
-    const miners = _.filter(Game.creeps, c => c.memory.role === 'miner').length;
+    const miners = _.filter(Game.creeps, c => c.memory.role === 'miner');
     const couriers = _.filter(Game.creeps, c => c.memory.role === 'courier').length;
+    const reservers = _.filter(Game.creeps, c => c.memory.role === 'reserver').length;
 
     const suffix = `(${lvl})-${(new Date()).toLocaleTimeString('hr')}`;
-    if (energy >= cost) {
+    // Advanced Economy
+    if (miners.length < limits.miners && energy >= minerCost) {
+      // Figure out what resource/container is empty in the room
+      let availableContainers = [];
+      containers.forEach(cont => {
+        let found = false;
+        console.log(miners, cont);
+        miners.forEach(miner => {
+          if (miner.target && miner.target.id === cont.id) {
+            found = true;
+          }
+        });
+
+        if (!found) {
+          availableContainers.push(cont)
+        }
+      });
+
+      // Attach it to the miner
+      if (availableContainers.length > 0) {
+        spawn.spawnCreep(minerBody, 'M' + suffix, {
+          memory: {
+            role  : 'miner',
+            level : lvl,
+            target: availableContainers[0],
+          },
+        });
+      }
+    }
+    else if (couriers < limits.couriers && energy >= courierCost) {
+      spawn.spawnCreep(courierBody, 'C' + suffix, { memory: { role: 'courier', level: lvl } });
+    }
+    else if (energy >= genericCost) {
       if (harvesters < limits.harvesters) {
         spawn.spawnCreep(genericBody, 'H' + suffix, { memory: { role: 'harvester', level: lvl } });
       }
@@ -91,13 +124,10 @@ module.exports = {
         spawn.spawnCreep(genericBody, 'R' + suffix, { memory: { role: 'repairer', level: lvl } });
       }
     }
-    // Advanced
-    if (miners < limits.miners && energy >= minerCost) {
-      spawn.spawnCreep(minerBody, 'M' + suffix, { memory: { role: 'miner', level: lvl } });
-    }
-    else if (couriers < limits.couriers && energy >= courierCost) {
-      spawn.spawnCreep(courierBody, 'C' + suffix, { memory: { role: 'courier', level: lvl } });
-    }
+    // Cross room creeps
+    // else if (reservers < Memory.roomsToReserve.length && energy >= reserverCost) {
+    //   spawn.spawnCreep(reserverBody, 'RES' + suffix, { memory: { role: 'reserver', level: lvl } });
+    // }
 
     const { spawning } = spawn;
     if (spawning) {
@@ -107,4 +137,35 @@ module.exports = {
           { align: 'left', opacity: 0.8 });
     }
   },
+};
+
+let calculateCost = function (body) {
+  let cost = 0;
+
+  body.forEach(p => {
+    switch (p) {
+      case CLAIM:
+        cost += 600;
+        break;
+      case HEAL:
+        cost += 250;
+        break;
+      case RANGED_ATTACK:
+        cost += 150;
+        break;
+      case WORK:
+        cost += 100;
+        break;
+      case ATTACK:
+        cost += 80;
+        break;
+      case TOUGH:
+        cost += 10;
+        break;
+      default:
+        cost += 50;
+    }
+  });
+
+  return cost;
 };

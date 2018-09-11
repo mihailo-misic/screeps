@@ -3,7 +3,7 @@ const startBuilding = require('role.builder');
 // Repairers: Repairs > Builds > Upgrades
 module.exports = {
   run: function (creep) {
-    creep.checkEnergyOr('🛠 Repair');
+    creep.checkEnergyOr('🛠');
 
     if (creep.memory.working) {
       // Look for broken walls first.
@@ -18,7 +18,7 @@ module.exports = {
       }
       if (target) {
         if (creep.repair(target) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 1, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
         }
       } else {
         // Don't be useless start building!

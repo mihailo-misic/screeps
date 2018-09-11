@@ -3,7 +3,7 @@ const startBuilding = require('role.builder');
 // Harvesters: Deposits > Builds > Upgrades
 module.exports = {
   run: function (creep) {
-    creep.checkEnergyOr('📦 Deposit');
+    creep.checkEnergyOr('📦');
 
     if (creep.memory.working) {
       let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -30,7 +30,7 @@ module.exports = {
 
       if (target) {
         if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 1, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
         }
       } else {
         // Don't be useless start building!

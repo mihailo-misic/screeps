@@ -19,4 +19,3 @@ StructureTower.prototype.defend = function () {
   }
 };
 
-_.filter(Game.structures, s => s.structureType === STRUCTURE_TOWER).forEach(t => t.defend());

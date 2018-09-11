@@ -1,6 +1,6 @@
 module.exports = {
   run: function (creep) {
-    creep.checkEnergyOr('🚚 Transfer');
+    creep.checkEnergyOr('🚚');
 
     if (creep.memory.working) {
       // Deposit to empty structure
@@ -29,7 +29,7 @@ module.exports = {
       target = target ? target : creep.room.storage;
       if (target) {
         if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 1, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
         }
       }
     } else {
@@ -39,7 +39,7 @@ module.exports = {
       });
       containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
       if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(containers[0], { reusePath: 1, visualizePathStyle: { stroke: 'yellow' } });
+        creep.moveTo(containers[0], { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
       } else {
         creep.memory.working = true;
       }
