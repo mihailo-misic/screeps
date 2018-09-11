@@ -45,13 +45,13 @@ module.exports = {
     if (lvl >= 3) {
       limits.builders = 1;
     }
-    if (storage.length && containers.length === sources.length && lvl >= 4) {
+    if (storage.length && containers.length && lvl >= 4) {
       limits = {
         harvesters: 0,
         builders  : 2,
         upgraders : 1,
         repairers : 0,
-        miners    : sources.length,
+        miners    : containers.length,
         couriers  : 2,
       };
     }
@@ -84,9 +84,8 @@ module.exports = {
       let availableContainers = [];
       containers.forEach(cont => {
         let found = false;
-        console.log(miners, cont);
         miners.forEach(miner => {
-          if (miner.target && miner.target.id === cont.id) {
+          if (miner.memory.target && miner.memory.target.id === cont.id) {
             found = true;
           }
         });
