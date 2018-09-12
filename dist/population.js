@@ -12,6 +12,21 @@ let limits = {
 module.exports = {
   mourn: function () {
     for (let name in Memory.creeps) {
+      // Remove the dead reserver from its room
+      if (Memory.creeps[name] && Memory.creeps[name].role === 'reserver') {
+        Memory.roomsToReserve.forEach((room) => {
+          if (room.name === Memory.creeps[name].room) {
+            room.reserver = null;
+          }
+        })
+      }
+      // Remove the dead remote miner from its room
+      if (Memory.creeps[name] && Memory.creeps[name].role === 'remote-miner') {
+        Memory.roomsToReserve.forEach((room) => {
+          _.remove(room.miners, (miner) => miner.id === Memory.creeps[name].id)
+        })
+      }
+      // Forget the creep
       if (!Game.creeps[name]) {
         delete Memory.creeps[name];
         console.log(`💀 RIP ${name} 💀`);
@@ -76,32 +91,23 @@ module.exports = {
     const miners = _.filter(Game.creeps, c => c.memory.role === 'miner');
     const couriers = _.filter(Game.creeps, c => c.memory.role === 'courier').length;
     const reservers = _.filter(Game.creeps, c => c.memory.role === 'reserver').length;
+    const remoteMiners = _.filter(Game.creeps, c => c.memory.role === 'remote-miner').length;
 
     const suffix = `(${lvl})-${(new Date()).toLocaleTimeString('hr')}`;
     // Advanced Economy
     if (miners.length < limits.miners && energy >= minerCost) {
       // Figure out what resource/container is empty in the room
-      let availableContainers = [];
-      containers.forEach(cont => {
-        let found = false;
-        miners.forEach(miner => {
-          if (miner.memory.target && miner.memory.target.id === cont.id) {
-            found = true;
-          }
-        });
-
-        if (!found) {
-          availableContainers.push(cont)
-        }
+      let availableContainers = _.filter(containers, (c) => {
+        let available = false;
+        miners.forEach(m => m.memory.target && m.memory.target.id === c.id ? null : available = true);
+        return available;
       });
 
       // Attach it to the miner
       if (availableContainers.length > 0) {
         spawn.spawnCreep(minerBody, 'M' + suffix, {
           memory: {
-            role  : 'miner',
-            level : lvl,
-            target: availableContainers[0],
+            role: 'miner', level: lvl, target: availableContainers[0],
           },
         });
       }
@@ -124,9 +130,30 @@ module.exports = {
       }
     }
     // Cross room creeps
-    // else if (reservers < Memory.roomsToReserve.length && energy >= reserverCost) {
-    //   spawn.spawnCreep(reserverBody, 'RES' + suffix, { memory: { role: 'reserver', level: lvl } });
-    // }
+    else if (unreservedRooms().length && energy >= reserverCost) {
+      spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
+        memory: {
+          role : 'reserver',
+          level: lvl,
+          room : unreservedRooms()[0],
+        },
+      });
+    }
+    else if (roomMissingMiners() && energy >= minerCost) {
+      let room = roomMissingMiners();
+      const containers = room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
+      let availableContainers = _.filter(containers, (c) => {
+        let available = false;
+        miners.forEach(m => m.memory.target && m.memory.target.id === c.id ? null : available = true);
+        return available;
+      });
+
+      spawn.spawnCreep(genericBody, 'ReM' + suffix, {
+        memory: {
+          role: 'remote-miner', level: lvl, room, target: availableContainers[0],
+        },
+      });
+    }
 
     const { spawning } = spawn;
     if (spawning) {
@@ -167,4 +194,19 @@ let calculateCost = function (body) {
   });
 
   return cost;
+};
+
+let unreservedRooms = function () {
+  return _.filter(Memory.roomsToReserve, (room) => !room.reserver)
+};
+
+let roomMissingMiners = function () {
+  let missing = false;
+  Memory.roomsToReserve.forEach(room => {
+    if (room.miners.length >= room.sources) {
+      missing = Game.rooms[room.name];
+    }
+  });
+
+  return missing
 };

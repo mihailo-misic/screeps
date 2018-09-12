@@ -1,6 +1,6 @@
 module.exports = {
-  run: function (creep, room) {
-    if (creep.room.name === room.name) {
+  run: function (creep) {
+    if (creep.room.name === creep.memory.room.name) {
       const container = creep.room.find(FIND_STRUCTURES, {
         filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.id === creep.memory.target.id,
       })[0];
@@ -10,7 +10,7 @@ module.exports = {
       }
     } else {
       // If you're not in the room with sources go to it.
-      creep.moveTo(creep.room.find(creep.room.findExitTo(room))[5], {
+      creep.moveTo(creep.room.find(creep.room.findExitTo(creep.memory.room.name))[5], {
         reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
       });
     }
