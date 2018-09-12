@@ -26,6 +26,14 @@ module.exports = {
           _.remove(room.miners, (miner) => miner.id === Memory.creeps[name].id)
         })
       }
+      // Remove the dead remote courier from its room
+      if (Memory.creeps[name] && Memory.creeps[name].role === 'remote-courier') {
+        Memory.roomsToReserve.forEach((room) => {
+          if (room.name === Memory.creeps[name].sourceRoom) {
+            room.courier = null;
+          }
+        })
+      }
       // Forget the creep
       if (!Game.creeps[name]) {
         delete Memory.creeps[name];
