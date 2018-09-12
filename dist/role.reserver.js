@@ -5,9 +5,7 @@ module.exports = {
         creep.moveTo(creep.room.controller, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
       }
     } else {
-      creep.moveTo(creep.pos.findClosestByRange(creep.room.findExitTo(creep.memory.room.name)), {
-        reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
-      })
+      creep.goToRoom(creep.memory.room)
     }
   },
 };

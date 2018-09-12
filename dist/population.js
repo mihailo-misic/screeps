@@ -130,12 +130,13 @@ module.exports = {
       }
     }
     // Cross room creeps
-    else if (unreservedRooms().length && energy >= reserverCost) {
+    else if (roomsMissingReservers().length && energy >= reserverCost) {
+      roomsMissingReservers()[0].reserver = true;
       spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
         memory: {
           role : 'reserver',
           level: lvl,
-          room : unreservedRooms()[0],
+          room : roomsMissingReservers()[0],
         },
       });
     }
@@ -151,6 +152,17 @@ module.exports = {
       spawn.spawnCreep(genericBody, 'ReM' + suffix, {
         memory: {
           role: 'remote-miner', level: lvl, room, target: availableContainers[0],
+        },
+      });
+    }
+    else if (roomsMissingCouriers().length && energy >= courierCost) {
+      roomsMissingCouriers()[0].courier = true;
+      spawn.spawnCreep(reserverBody, 'ReC' + suffix, {
+        memory: {
+          role       : 'remote-courier',
+          level      : lvl,
+          sourceRoom : roomsMissingCouriers()[0],
+          depositRoom: Memory.home,
         },
       });
     }
@@ -196,7 +208,7 @@ let calculateCost = function (body) {
   return cost;
 };
 
-let unreservedRooms = function () {
+let roomsMissingReservers = function () {
   return _.filter(Memory.roomsToReserve, (room) => !room.reserver)
 };
 
@@ -209,4 +221,8 @@ let roomMissingMiners = function () {
   });
 
   return missing
+};
+
+let roomsMissingCouriers = function () {
+  return _.filter(Memory.roomsToReserve, (room) => !room.courier)
 };

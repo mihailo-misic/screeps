@@ -24,10 +24,34 @@ Creep.prototype.getEnergy = function (room = Memory.home) {
     }
   } else {
     // If you're not in the room with sources go to it.
-    this.moveTo(this.room.find(this.room.findExitTo(room.name))[5], {
-      reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
-    });
+    this.goToRoom(room);
   }
+};
+
+Creep.prototype.findDepletedStructure = function (ignoreStorage) {
+  let target = this.pos.findClosestByPath(FIND_STRUCTURES, {
+    filter: (s) => {
+      if ((s.structureType === STRUCTURE_EXTENSION
+          || s.structureType === STRUCTURE_SPAWN)
+          && s.energy < s.energyCapacity) {
+        return true;
+      }
+      // This prevents the creep from feeding the tower for each shot
+      if (s.structureType === STRUCTURE_TOWER && s.energy < (s.energyCapacity / 2)) {
+        // It starts filling it if it's below 33% energy.
+        this.memory.busyWithTower = true;
+      }
+      if (s.structureType === STRUCTURE_TOWER && this.memory.busyWithTower === true) {
+        // Fill it with energy until it's full, and leave it be afterwords.
+        this.memory.busyWithTower = s.energy < s.energyCapacity;
+        return this.memory.busyWithTower;
+      }
+
+      return false;
+    },
+  });
+
+  return !target && !ignoreStorage ? this.room.storage : target
 };
 
 // Check if the creep has energy,
@@ -45,5 +69,20 @@ Creep.prototype.checkEnergyOr = function (msg) {
   const droppedEnergy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
   if (droppedEnergy) {
     this.pickup(droppedEnergy)
+  }
+};
+
+Creep.prototype.goToRoom = function (room) {
+  this.moveTo(this.pos.findClosestByRange(this.room.findExitTo(room.name)), {
+    reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
+  })
+};
+
+Creep.prototype.getDroppedEnergy = function () {
+  const droppedEnergy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+  if (this.pickup(droppedEnergy) === ERR_NOT_IN_RANGE) {
+    this.moveTo(droppedEnergy, { reusePath: 10, visualizePathStyle: { stroke: 'purple' } });
+  } else {
+    this.memory.priority = null;
   }
 };

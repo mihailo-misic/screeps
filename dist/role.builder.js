@@ -21,15 +21,11 @@ module.exports = {
             // Don't be useless start upgrading!
             startUpgrading.run(creep);
           } else {
-            creep.moveTo(creep.room.find(creep.room.findExitTo(srcRoom.name))[5], {
-              reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
-            })
+            creep.goToRoom(srcRoom);
           }
         }
       } else {
-        creep.moveTo(creep.room.find(creep.room.findExitTo(destRoom.name))[5], {
-          reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
-        })
+        creep.goToRoom(destRoom);
       }
     } else {
       creep.getEnergy(srcRoom);

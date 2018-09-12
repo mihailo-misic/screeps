@@ -2,21 +2,22 @@ require('proto.creep');
 require('proto.tower');
 
 const roles = {
-  harvester  : require('role.harvester'),
-  builder    : require('role.builder'),
-  upgrader   : require('role.upgrader'),
-  repairer   : require('role.repairer'),
-  miner      : require('role.miner'),
-  courier    : require('role.courier'),
-  reserver   : require('role.reserver'),
-  minerRemote: require('role.remote-miner'),
+  'harvester'     : require('role.harvester'),
+  'builder'       : require('role.builder'),
+  'upgrader'      : require('role.upgrader'),
+  'repairer'      : require('role.repairer'),
+  'miner'         : require('role.miner'),
+  'courier'       : require('role.courier'),
+  'reserver'      : require('role.reserver'),
+  'remote-miner'  : require('role.remote-miner'),
+  'remote-courier': require('role.remote-courier'),
 };
 
 const pop = require('population');
 const stats = require('stats');
 
 Memory.roomsToReserve = [
-  { name: 'W52N51', reserver: true, sources: 1, miners: [] },
+  { name: 'W52N51', reserver: true, sources: 1, miners: [], courier: true },
 ];
 
 module.exports.loop = function () {
@@ -31,7 +32,7 @@ module.exports.loop = function () {
     let creep = Game.creeps[name];
     // Command the builders
     if (Memory.roomsToReserve.length && creep.memory.role === 'builder') {
-      roles[creep.memory.role].run(creep, Memory.home, Memory.home);
+      roles[creep.memory.role].run(creep, Memory.home, Memory.roomsToReserve[0]);
       continue
     }
     roles[creep.memory.role].run(creep);

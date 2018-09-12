@@ -9,10 +9,7 @@ module.exports = {
         creep.moveTo(container, { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
       }
     } else {
-      // If you're not in the room with sources go to it.
-      creep.moveTo(creep.room.find(creep.room.findExitTo(creep.memory.room.name))[5], {
-        reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
-      });
+      creep.goToRoom(creep.memory.room)
     }
   },
 };
