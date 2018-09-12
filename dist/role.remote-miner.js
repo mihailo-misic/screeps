@@ -10,7 +10,7 @@ module.exports = {
       }
 
       if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(container, { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
+        creep.moveTo(container, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
       }
     } else {
       creep.goToRoom(creep.memory.room)

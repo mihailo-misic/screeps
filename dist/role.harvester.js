@@ -9,7 +9,7 @@ module.exports = {
       let target = creep.findDepletedStructure('ignoreStorage');
       if (target) {
         if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 10, visualizePathStyle: { stroke: 'cyan' } });
         }
       } else {
         // Don't be useless start building!

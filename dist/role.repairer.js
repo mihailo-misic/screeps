@@ -18,7 +18,7 @@ module.exports = {
       }
       if (target) {
         if (creep.repair(target) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 5, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 10, visualizePathStyle: { stroke: 'cyan' } });
         }
       } else {
         // Don't be useless start building!

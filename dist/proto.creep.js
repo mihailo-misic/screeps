@@ -9,7 +9,7 @@ Creep.prototype.getEnergy = function (room = Memory.home) {
 
     if (source) {
       if (this.withdraw(source, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-        this.moveTo(source, { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
+        this.moveTo(source, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
       } else {
         this.memory.working = true;
       }
@@ -19,7 +19,7 @@ Creep.prototype.getEnergy = function (room = Memory.home) {
         this.memory.working = true;
       }
       if (this.harvest(source) === ERR_NOT_IN_RANGE) {
-        this.moveTo(source, { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
+        this.moveTo(source, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
       }
     }
   } else {
@@ -74,7 +74,7 @@ Creep.prototype.checkEnergyOr = function (msg) {
 
 Creep.prototype.goToRoom = function (room) {
   this.moveTo(this.pos.findClosestByRange(this.room.findExitTo(room.name)), {
-    reusePath: 5, visualizePathStyle: { stroke: 'lime' },
+    reusePath: 10, visualizePathStyle: { stroke: 'lime' },
   })
 };
 
