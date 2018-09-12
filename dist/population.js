@@ -45,11 +45,9 @@ module.exports = {
 
   breedFrom: function (spawn) {
     const energy = spawn.room.energyCapacityAvailable;
-    const sources = spawn.room.find(FIND_SOURCES);
     const storage = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_STORAGE });
     const containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
     let lvl = Math.floor((energy - 300) / 250);
-    lvl = lvl > 4 ? 4 : lvl;
 
     let workParts = Array(2 + lvl).fill(WORK);
     let carryParts = Array(1 + lvl).fill(CARRY);
