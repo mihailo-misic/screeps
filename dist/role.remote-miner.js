@@ -5,6 +5,10 @@ module.exports = {
         filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.id === creep.memory.target.id,
       })[0];
 
+      if (container.hits < container.hitsMax){
+        creep.repair(container);
+      }
+
       if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
         creep.moveTo(container, { reusePath: 5, visualizePathStyle: { stroke: 'yellow' } });
       }

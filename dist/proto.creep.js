@@ -74,7 +74,7 @@ Creep.prototype.checkEnergyOr = function (msg) {
 
 Creep.prototype.goToRoom = function (room) {
   this.moveTo(this.pos.findClosestByRange(this.room.findExitTo(room.name)), {
-    reusePath: 5, visualizePathStyle: { stroke: 'cyan' },
+    reusePath: 5, visualizePathStyle: { stroke: 'lime' },
   })
 };
 

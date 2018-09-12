@@ -8,7 +8,7 @@ module.exports = {
     if (creep.memory.working) {
       // Look for broken walls first.
       let target = creep.pos.findClosestByPath(FIND_STRUCTURES,
-          { filter: (s) => (s.hits <= 3000) && s.structureType === STRUCTURE_WALL },
+          { filter: (s) => (s.hits <= 5000) && s.structureType === STRUCTURE_WALL },
       );
       // Look for other stuff if walls are fine.
       if (!target) {

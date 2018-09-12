@@ -16,9 +16,11 @@ const roles = {
 const pop = require('population');
 const stats = require('stats');
 
-Memory.roomsToReserve = [
-  { name: 'W52N51', reserver: true, sources: 1, miners: [], courier: true },
-];
+if (!Memory.roomsToReserve) {
+  Memory.roomsToReserve = [
+    { name: 'W52N51', reserver: true, sources: 1, miners: [], courier: true },
+  ];
+}
 
 module.exports.loop = function () {
   Memory.home = Game.spawns['Spawn1'].room;
@@ -32,7 +34,7 @@ module.exports.loop = function () {
     let creep = Game.creeps[name];
     // Command the builders
     if (Memory.roomsToReserve.length && creep.memory.role === 'builder') {
-      roles[creep.memory.role].run(creep, Memory.roomsToReserve[0], Memory.roomsToReserve[0]);
+      roles[creep.memory.role].run(creep, Memory.home, Memory.home);
       continue
     }
     roles[creep.memory.role].run(creep);
