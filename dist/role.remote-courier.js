@@ -7,13 +7,6 @@ module.exports = {
     }
 
     if (creep.memory.working) {
-      // Fix the road along the way
-      let target = creep.pos.findClosestByPath(FIND_STRUCTURES,
-          { filter: (s) => s.hits < s.hitsMax && s.structureType !== STRUCTURE_WALL },
-      );
-      if (target && creep.body.includes(WORK)) {
-        creep.repair(target);
-      }
 
       if (creep.room.name === creep.memory.depositRoom.name) {
         // Deposit to empty structure
@@ -24,6 +17,13 @@ module.exports = {
           }
         }
       } else {
+        // Fix the road along the way
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES,
+            { filter: (s) => s.hits < s.hitsMax && s.structureType !== STRUCTURE_WALL },
+        );
+        if (target) {
+          creep.repair(target)
+        }
         creep.goToRoom(creep.memory.depositRoom)
       }
     } else {

@@ -87,9 +87,11 @@ module.exports = {
     const courierBody = Array(partMultiplier * 2).fill(CARRY).concat(Array(partMultiplier).fill(MOVE));
     const reserverBody = Array(2).fill(CLAIM).concat(Array(2).fill(MOVE));
     // Calculating their cost
+    // 300 / 300 / 550 / 800  / 1300 / 1800 / 2300 / 5000 / 12000
+    // 0   / 1   / 2   / 3    / 4    / 5    / 6    / 7    / 8
     const genericCost = calculateCost(genericBody); // up to 1300
     const minerCost = calculateCost(minerBody); // 650
-    const courierCost = calculateCost(courierBody); // 900 // 1150 (remote)
+    const courierCost = calculateCost(courierBody); // 900 // 1300 (remote)
     const reserverCost = calculateCost(reserverBody); // 1300
 
     // Count of all sie creeps.
@@ -161,10 +163,10 @@ module.exports = {
           },
         });
       }
-      else if (roomsMissingCouriers().length && energy >= courierCost + 350) {
+      else if (roomsMissingCouriers().length && energy >= courierCost + 400) {
         let hisRoom = roomsMissingCouriers()[0];
         hisRoom.courier = true;
-        spawn.spawnCreep(courierBody.concat(Array(4).fill(CARRY)).concat([WORK,MOVE]), 'ReC' + suffix, {
+        spawn.spawnCreep(courierBody.concat(Array(5).fill(CARRY)).concat([WORK, MOVE]), 'ReC' + suffix, {
           memory: {
             role       : 'remote-courier',
             level      : lvl,
