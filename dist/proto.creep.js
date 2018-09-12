@@ -81,7 +81,7 @@ Creep.prototype.goToRoom = function (room) {
 Creep.prototype.getDroppedEnergy = function () {
   const droppedEnergy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
   if (this.pickup(droppedEnergy) === ERR_NOT_IN_RANGE) {
-    this.moveTo(droppedEnergy, { reusePath: 10, visualizePathStyle: { stroke: 'purple' } });
+    this.moveTo(droppedEnergy, { reusePath: 10, visualizePathStyle: { stroke: 'white' } });
   } else {
     this.memory.priority = null;
   }
