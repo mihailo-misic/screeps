@@ -91,7 +91,7 @@ module.exports = {
     const minerBody = [...Array(5).fill(WORK), ...Array(3).fill(MOVE)];
     const pm = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
     const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
-    const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
+    const reserverBody = [...Array(1).fill(CLAIM), ...Array(1).fill(MOVE)];
     const defenderBody = [...Array(5).fill(TOUGH), ...Array(5).fill(ATTACK), HEAL, ...Array(11).fill(MOVE)];
     // Calculating their cost
     // 300 / 300 / 550 / 800  / 1300 / 1800 / 2300 / 5000 / 12000
@@ -99,7 +99,7 @@ module.exports = {
     const genericCost = calculateCost(genericBody); // up to 1300
     const minerCost = calculateCost(minerBody); // 650
     const courierCost = calculateCost(courierBody); // 900 // 1250 (remote)
-    const reserverCost = calculateCost(reserverBody); // 1300
+    const reserverCost = calculateCost(reserverBody); // 650
     const defenderCost = calculateCost(defenderBody); // 1250
 
     // Count of all sie creeps.

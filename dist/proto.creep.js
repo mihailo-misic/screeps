@@ -50,8 +50,11 @@ Creep.prototype.findDepletedStructure = function (ignoreStorage) {
       return false;
     },
   });
+  if (!target && !ignoreStorage) {
+    target = this.room.storage;
+  }
 
-  return !target && !ignoreStorage ? this.room.storage : target
+  return target
 };
 
 // Check if the creep has energy,
