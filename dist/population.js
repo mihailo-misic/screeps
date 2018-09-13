@@ -16,23 +16,31 @@ module.exports = {
       if (!Game.creeps[name]) {
         // Remove the dead reserver from its room
         if (Memory.creeps[name] && Memory.creeps[name].role === 'reserver') {
-          Memory.roomsToReserve.forEach((room) => {
+          Memory.rooms.forEach((room) => {
             if (room.name === Memory.creeps[name].room.name) {
-              room.reserver = null;
+              room.reserver = false;
+            }
+          })
+        }
+        // Remove the dead remote defender from its room
+        if (Memory.creeps[name] && Memory.creeps[name].role === 'remote-defender') {
+          Memory.rooms.forEach((room) => {
+            if (room.name === Memory.creeps[name].room.name) {
+              room.defender = false;
             }
           })
         }
         // Remove the dead remote miner from its room
         if (Memory.creeps[name] && Memory.creeps[name].role === 'remote-miner') {
-          Memory.roomsToReserve.forEach((room) => {
+          Memory.rooms.forEach((room) => {
             _.remove(room.miners, (miner) => miner.name === name)
           })
         }
         // Remove the dead remote courier from its room
         if (Memory.creeps[name] && Memory.creeps[name].role === 'remote-courier') {
-          Memory.roomsToReserve.forEach((room) => {
+          Memory.rooms.forEach((room) => {
             if (room.name === Memory.creeps[name].sourceRoom.name) {
-              room.courier = null;
+              room.courier = false;
             }
           })
         }
@@ -81,10 +89,11 @@ module.exports = {
 
     // Constructing bodies
     const genericBody = [...workParts, ...carryParts, ...moveParts];
-    const minerBody = Array(5).fill(WORK).concat(Array(3).fill(MOVE));
-    const partMultiplier = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
-    const courierBody = Array(partMultiplier * 2).fill(CARRY).concat(Array(partMultiplier).fill(MOVE));
-    const reserverBody = Array(2).fill(CLAIM).concat(Array(2).fill(MOVE));
+    const minerBody = [...Array(5).fill(WORK), ...Array(3).fill(MOVE)];
+    const pm = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
+    const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
+    const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
+    const defenderBody = [...Array(5).fill(TOUGH), ...Array(5).fill(ATTACK), HEAL, ...Array(11).fill(MOVE)];
     // Calculating their cost
     // 300 / 300 / 550 / 800  / 1300 / 1800 / 2300 / 5000 / 12000
     // 0   / 1   / 2   / 3    / 4    / 5    / 6    / 7    / 8
@@ -92,6 +101,7 @@ module.exports = {
     const minerCost = calculateCost(minerBody); // 650
     const courierCost = calculateCost(courierBody); // 900 // 1250 (remote)
     const reserverCost = calculateCost(reserverBody); // 1300
+    const defenderCost = calculateCost(defenderBody); // 1250
 
     // Count of all sie creeps.
     const harvesters = _.filter(Game.creeps, c => c.memory.role === 'harvester').length;
@@ -136,18 +146,30 @@ module.exports = {
         spawn.spawnCreep(genericBody, 'R' + suffix, { memory: { role: 'repairer', level: lvl } });
       }
       // Remote creeps
-      else if (false&&roomsMissingReservers().length && energy >= reserverCost) {
-        let hisRoom = roomsMissingReservers()[0];
-        hisRoom.reserver = true;
-        spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
+      else if (true && roomsMissingA('reserver').length && energy >= reserverCost) {
+        let hisRoom = roomsMissingA('reserver')[0];
+        if (spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
           memory: {
             role : 'reserver',
             level: lvl,
             room : hisRoom,
           },
-        });
+        }) === OK) {
+          hisRoom.reserver = true;
+        }
       }
-      else if (false&&roomMissingMiners() && energy >= minerCost + 50) {
+      else if (true && roomsMissingA('defender').length && energy >= defenderCost) {
+        let hisRoom = roomsMissingA('defender')[0];
+        console.log('DEFEND!', hisRoom.name);
+        if (spawn.spawnCreep(defenderBody, 'ReD' + suffix, {
+          memory: {
+            role: 'remote-defender', level: lvl, room: hisRoom,
+          },
+        }) === OK) {
+          hisRoom.defender = true;
+        }
+      }
+      else if (true && roomMissingMiners() && energy >= minerCost + 50) {
         let room = roomMissingMiners();
         const containers = room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
         let availableContainers = _.filter(containers, (c) => {
@@ -162,10 +184,9 @@ module.exports = {
           },
         });
       }
-      else if (false&&roomsMissingCouriers().length && energy >= courierCost + 350) {
-        let hisRoom = roomsMissingCouriers()[0];
-        hisRoom.courier = true;
-        spawn.spawnCreep(courierBody.concat(Array(2).fill(CARRY)
+      else if (true && roomsMissingA('courier').length && energy >= courierCost + 350) {
+        let hisRoom = roomsMissingA('courier')[0];
+        if (spawn.spawnCreep(courierBody.concat(Array(2).fill(CARRY)
             .concat(Array(2).fill(MOVE))).concat([WORK, MOVE]), 'ReC' + suffix, {
           memory: {
             role       : 'remote-courier',
@@ -173,7 +194,9 @@ module.exports = {
             sourceRoom : hisRoom,
             depositRoom: Memory.home,
           },
-        });
+        }) === OK) {
+          hisRoom.courier = true;
+        }
       }
     } else {
       let spawningCreep = Game.creeps[spawning.name];
@@ -182,7 +205,7 @@ module.exports = {
           { align: 'left', opacity: 0.8 });
 
       if (spawningCreep.memory.role === 'remote-miner') {
-        Memory.roomsToReserve.forEach((r) => {
+        Memory.rooms.forEach((r) => {
           if (r.name === spawningCreep.memory.room.name && _.findIndex(r.miners, { id: spawningCreep.id }) < 0) {
             r.miners.push(spawningCreep);
           }
@@ -223,21 +246,17 @@ let calculateCost = function (body) {
   return cost;
 };
 
-let roomsMissingReservers = function () {
-  return _.filter(Memory.roomsToReserve, (room) => !room.reserver)
+let roomsMissingA = function (role) {
+  return _.filter(Memory.rooms, (room) => !room[role])
 };
 
 let roomMissingMiners = function () {
   let missing = false;
-  Memory.roomsToReserve.forEach(room => {
+  Memory.rooms.forEach(room => {
     if (room.miners.length < room.sources) {
       missing = Game.rooms[room.name];
     }
   });
 
   return missing
-};
-
-let roomsMissingCouriers = function () {
-  return _.filter(Memory.roomsToReserve, (room) => !room.courier)
 };

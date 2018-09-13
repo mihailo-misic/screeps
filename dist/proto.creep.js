@@ -70,6 +70,10 @@ Creep.prototype.checkEnergyOr = function (msg) {
   if (droppedEnergy) {
     this.pickup(droppedEnergy)
   }
+  const nearTombstone = this.pos.findClosestByPath(FIND_TOMBSTONES);
+  if (nearTombstone) {
+    this.withdraw(nearTombstone, RESOURCE_ENERGY)
+  }
 };
 
 Creep.prototype.goToRoom = function (room) {

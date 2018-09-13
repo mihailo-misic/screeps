@@ -11,14 +11,15 @@ const roles = {
   'reserver'      : require('role.reserver'),
   'remote-miner'  : require('role.remote-miner'),
   'remote-courier': require('role.remote-courier'),
+  'remote-defender': require('role.remote-defender'),
 };
 
 const pop = require('population');
 const stats = require('stats');
 
-if (!Memory.roomsToReserve) {
-  Memory.roomsToReserve = [
-    { name: 'W52N51', reserver: true, sources: 1, miners: [], courier: true },
+if (!Memory.rooms) {
+  Memory.rooms = [
+    { name: 'W52N51', intent: 'reserve', reserver: false, defender: false, sources: 1, miners: [], courier: false },
   ];
 }
 
@@ -33,7 +34,7 @@ module.exports.loop = function () {
   for (let name in Game.creeps) {
     let creep = Game.creeps[name];
     // Command the builders
-    if (Memory.roomsToReserve.length && creep.memory.role === 'builder') {
+    if (Memory.rooms.length && creep.memory.role === 'builder') {
       roles[creep.memory.role].run(creep, Memory.home, Memory.home);
       continue
     }
