@@ -7,7 +7,6 @@ module.exports = {
     }
 
     if (creep.memory.working) {
-
       if (creep.room.name === creep.memory.depositRoom.name) {
         // Deposit to empty structure
         let target = creep.findDepletedStructure();
