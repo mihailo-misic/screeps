@@ -13,7 +13,7 @@ module.exports = {
       // Look for other stuff if walls are fine.
       if (!target) {
         target = creep.pos.findClosestByPath(FIND_STRUCTURES,
-            { filter: (s) => s.hits < s.hitsMax && (s.structureType !== STRUCTURE_WALL || s.structureType !== STRUCTURE_RAMPART) },
+            { filter: (s) => s.hits < s.hitsMax && (s.structureType !== STRUCTURE_WALL && s.structureType !== STRUCTURE_RAMPART) },
         );
       }
       if (target) {
