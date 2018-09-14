@@ -16,14 +16,19 @@ module.exports = {
       }
     } else {
       // Withdraw
-      const containers = creep.room.find(FIND_STRUCTURES, {
-        filter: (s) => s.structureType === STRUCTURE_CONTAINER,
-      });
-      containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
-      if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(containers[0], { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
+      const droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+      if (droppedEnergy) {
+        this.getDroppedEnergy();
       } else {
-        creep.memory.working = true;
+        const containers = creep.room.find(FIND_STRUCTURES, {
+          filter: (s) => s.structureType === STRUCTURE_CONTAINER,
+        });
+        containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
+        if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+          creep.moveTo(containers[0], { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
+        } else {
+          creep.memory.working = true;
+        }
       }
     }
   },
