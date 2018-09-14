@@ -36,7 +36,7 @@ module.exports.loop = function () {
     let creep = Game.creeps[name];
     // Command the builders
     if (Memory.rooms.length && creep.memory.role === 'builder') {
-      roles[creep.memory.role].run(creep, Memory.home, Memory.home);
+      roles[creep.memory.role].run(creep, Memory.home, Memory.rooms[1]);
       continue
     }
     roles[creep.memory.role].run(creep);

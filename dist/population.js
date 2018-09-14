@@ -155,9 +155,7 @@ module.exports = {
         let hisRoom = roomsMissingA('reserver')[0];
         if (spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
           memory: {
-            role : 'reserver',
-            level: lvl,
-            room : hisRoom,
+            role: 'reserver', level: lvl, room: hisRoom,
           },
         }) === OK) {
           hisRoom.reserver = true;
@@ -192,10 +190,7 @@ module.exports = {
         let hisRoom = roomsMissingA('courier')[0];
         if (spawn.spawnCreep(remoteCourierBody, 'ReC' + suffix, {
           memory: {
-            role       : 'remote-courier',
-            level      : lvl,
-            sourceRoom : hisRoom,
-            depositRoom: Memory.home,
+            role: 'remote-courier', level: lvl, sourceRoom: hisRoom, depositRoom: Memory.home,
           },
         }) === OK) {
           hisRoom.courier = true;

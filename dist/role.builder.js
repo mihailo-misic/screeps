@@ -17,7 +17,7 @@ module.exports = {
       // }
       if (creep.room.name === destRoom.name) {
         if (!findWork(creep)) {
-          if (srcRoom.name === destRoom.name) {
+          if (creep.room.controller) {
             // Don't be useless start upgrading!
             startUpgrading.run(creep);
           } else {
