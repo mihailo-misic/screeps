@@ -2,15 +2,15 @@ require('proto.creep');
 require('proto.tower');
 
 const roles = {
-  'harvester'     : require('role.harvester'),
-  'builder'       : require('role.builder'),
-  'upgrader'      : require('role.upgrader'),
-  'repairer'      : require('role.repairer'),
-  'miner'         : require('role.miner'),
-  'courier'       : require('role.courier'),
-  'reserver'      : require('role.reserver'),
-  'remote-miner'  : require('role.remote-miner'),
-  'remote-courier': require('role.remote-courier'),
+  'harvester'      : require('role.harvester'),
+  'builder'        : require('role.builder'),
+  'upgrader'       : require('role.upgrader'),
+  'repairer'       : require('role.repairer'),
+  'miner'          : require('role.miner'),
+  'courier'        : require('role.courier'),
+  'reserver'       : require('role.reserver'),
+  'remote-miner'   : require('role.remote-miner'),
+  'remote-courier' : require('role.remote-courier'),
   'remote-defender': require('role.remote-defender'),
 };
 
@@ -20,6 +20,7 @@ const stats = require('stats');
 if (!Memory.rooms) {
   Memory.rooms = [
     { name: 'W52N51', intent: 'reserve', reserver: false, defender: false, sources: 1, miners: [], courier: false },
+    { name: 'W51N52', intent: 'reserve', reserver: false, defender: false, sources: 1, miners: [], courier: false },
   ];
 }
 
@@ -35,7 +36,7 @@ module.exports.loop = function () {
     let creep = Game.creeps[name];
     // Command the builders
     if (Memory.rooms.length && creep.memory.role === 'builder') {
-      roles[creep.memory.role].run(creep, Memory.home, Memory.home);
+      roles[creep.memory.role].run(creep, Memory.home, Memory.rooms[1]);
       continue
     }
     roles[creep.memory.role].run(creep);

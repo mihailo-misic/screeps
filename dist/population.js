@@ -56,6 +56,9 @@ module.exports = {
     const storage = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_STORAGE });
     const containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
     let lvl = Math.floor((energy - 300) / 250);
+    if (!storage.length && storage[0].store[RESOURCE_ENERGY] < 1000) {
+      lvl = lvl > 4 ? 4 : lvl;
+    }
 
     let workParts = Array(2 + lvl).fill(WORK);
     let carryParts = Array(1 + lvl).fill(CARRY);
@@ -93,7 +96,7 @@ module.exports = {
     const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
     const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
     const defenderBody = [...Array(5).fill(TOUGH), ...Array(5).fill(ATTACK), HEAL, ...Array(11).fill(MOVE)];
-    const rpm = Math.floor((energy-150) / 3 / 50);
+    const rpm = Math.floor((energy - 150) / 3 / 50);
     const remoteCourierBody = [...Array(rpm * 2).fill(CARRY), ...Array(rpm).fill(MOVE), ...[WORK, MOVE]];
     // Calculating their cost
     // 300 / 300 / 550 / 800  / 1300 / 1800 / 2300 / 5000 / 12000
@@ -162,7 +165,6 @@ module.exports = {
       }
       else if (true && roomsMissingA('defender').length && energy >= defenderCost) {
         let hisRoom = roomsMissingA('defender')[0];
-        console.log('DEFEND!', hisRoom.name);
         if (spawn.spawnCreep(defenderBody, 'ReD' + suffix, {
           memory: {
             role: 'remote-defender', level: lvl, room: hisRoom,
@@ -248,13 +250,13 @@ let calculateCost = function (body) {
 };
 
 let roomsMissingA = function (role) {
-  return _.filter(Memory.rooms, (room) => !room[role])
+  return _.filter(Memory.rooms, (room) => !room.wait && !room[role])
 };
 
 let roomMissingMiners = function () {
   let missing = false;
   Memory.rooms.forEach(room => {
-    if (room.miners.length < room.sources) {
+    if (!room.wait && room.miners.length < room.sources) {
       missing = Game.rooms[room.name];
     }
   });
