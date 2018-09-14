@@ -93,6 +93,8 @@ module.exports = {
     const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
     const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
     const defenderBody = [...Array(5).fill(TOUGH), ...Array(5).fill(ATTACK), HEAL, ...Array(11).fill(MOVE)];
+    const rpm = Math.floor((energy-150) / 3 / 50);
+    const remoteCourierBody = [...Array(rpm * 2).fill(CARRY), ...Array(rpm).fill(MOVE), ...[WORK, MOVE]];
     // Calculating their cost
     // 300 / 300 / 550 / 800  / 1300 / 1800 / 2300 / 5000 / 12000
     // 0   / 1   / 2   / 3    / 4    / 5    / 6    / 7    / 8
@@ -101,6 +103,7 @@ module.exports = {
     const courierCost = calculateCost(courierBody); // 900 // 1250 (remote)
     const reserverCost = calculateCost(reserverBody); // 1300
     const defenderCost = calculateCost(defenderBody); // 1250
+    const remoteCourierCost = calculateCost(remoteCourierBody);
 
     // Count of all sie creeps.
     const harvesters = _.filter(Game.creeps, c => c.memory.role === 'harvester').length;
@@ -183,10 +186,9 @@ module.exports = {
           },
         });
       }
-      else if (true && roomsMissingA('courier').length && energy >= courierCost + 350) {
+      else if (true && roomsMissingA('courier').length && energy >= remoteCourierCost) {
         let hisRoom = roomsMissingA('courier')[0];
-        if (spawn.spawnCreep(courierBody.concat(Array(2).fill(CARRY)
-            .concat(Array(2).fill(MOVE))).concat([WORK, MOVE]), 'ReC' + suffix, {
+        if (spawn.spawnCreep(remoteCourierBody, 'ReC' + suffix, {
           memory: {
             role       : 'remote-courier',
             level      : lvl,
