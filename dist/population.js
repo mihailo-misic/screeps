@@ -123,8 +123,8 @@ module.exports = {
       if (miners.length < limits.miners && energy >= minerCost) {
         // Figure out what resource/container is empty in the room
         let availableContainers = _.filter(containers, (c) => {
-          let available = false;
-          miners.forEach(m => m.memory.target && m.memory.target.id === c.id ? null : available = true);
+          let available = true;
+          miners.forEach(m => m.memory.target && m.memory.target.id === c.id ? available = false : available = true);
           return available;
         });
 
@@ -135,11 +135,11 @@ module.exports = {
           });
         }
       }
-      else if (couriers < limits.couriers && energy >= courierCost) {
-        spawn.spawnCreep(courierBody, 'C' + suffix, { memory: { role: 'courier', level: lvl } });
-      }
       else if (harvesters < limits.harvesters && energy >= genericCost) {
         spawn.spawnCreep(genericBody, 'H' + suffix, { memory: { role: 'harvester', level: lvl } });
+      }
+      else if (couriers < limits.couriers && energy >= courierCost) {
+        spawn.spawnCreep(courierBody, 'C' + suffix, { memory: { role: 'courier', level: lvl } });
       }
       else if (builders < limits.builders && energy >= genericCost) {
         spawn.spawnCreep(genericBody, 'B' + suffix, { memory: { role: 'builder', level: lvl } });

@@ -16,10 +16,10 @@ module.exports = {
       }
     } else {
       // Withdraw
-      const droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-      if (droppedEnergy) {
-        this.getDroppedEnergy();
-      } else {
+      // const droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+      // if (droppedEnergy) {
+      //   creep.getDroppedEnergy();
+      // } else {
         const containers = creep.room.find(FIND_STRUCTURES, {
           filter: (s) => s.structureType === STRUCTURE_CONTAINER,
         });
@@ -29,7 +29,7 @@ module.exports = {
         } else {
           creep.memory.working = true;
         }
-      }
+      // }
     }
   },
 };
