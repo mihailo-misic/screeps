@@ -1,14 +1,9 @@
-// Upgrader: Upgrades
+// Stats module displays and handles general stats.
 module.exports = {
-  run: function (creep) {
-    creep.checkEnergyOr('⚡');
-
-    if (creep.memory.working) {
-      if (creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
-        creep.moveTo(creep.room.controller, { reusePath: 10, visualizePathStyle: { stroke: 'cyan' } });
-      }
-    } else {
-      creep.getEnergy();
-    }
+  // Display the energy status right below the rooms center.
+  energyStatus: function () {
+    const myRoom = Game.spawns['Spawn1'].room;
+    const color = myRoom.energyAvailable >= myRoom.energyCapacityAvailable - 100 ? 'green' : 'orange';
+    myRoom.visual.text(`${myRoom.energyAvailable} / ${myRoom.energyCapacityAvailable}`, 32, 31, { color, font: 0.8 })
   },
 };
