@@ -22,7 +22,7 @@ module.exports = {
         }
       } else {
         // Don't be useless start building!
-        startBuilding.run(creep);
+        // startBuilding.run(creep);
       }
     } else {
       creep.getEnergy();

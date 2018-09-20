@@ -8,6 +8,10 @@ module.exports = {
 
     if (creep.memory.working) {
       if (creep.room.name === creep.memory.depositRoom.name) {
+        if (creep.ticksToLive < 900) {
+          creep.memory.priority = 'goRefill';
+        }
+
         // Deposit to empty structure
         let target = creep.findDepletedStructure();
         if (target) {

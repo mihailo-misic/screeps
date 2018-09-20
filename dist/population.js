@@ -55,9 +55,10 @@ module.exports = {
     const energy = spawn.room.energyCapacityAvailable;
     const storage = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_STORAGE });
     const containers = spawn.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
+    const sources = spawn.room.find(FIND_SOURCES);
     let lvl = Math.floor((energy - 300) / 250);
-    if (!storage.length && storage[0].store[RESOURCE_ENERGY] < 1000) {
-      lvl = lvl > 4 ? 4 : lvl;
+    if (storage.length && storage[0].store[RESOURCE_ENERGY] < 1000) {
+      lvl = lvl - 2
     }
 
     let workParts = Array(2 + lvl).fill(WORK);
@@ -84,7 +85,7 @@ module.exports = {
         builders  : 2,
         upgraders : 1,
         repairers : 0,
-        miners    : containers.length,
+        miners    : sources.length,
         couriers  : 2,
       };
     }
@@ -195,6 +196,8 @@ module.exports = {
         }) === OK) {
           hisRoom.courier = true;
         }
+      } else {
+        spawn.renewCreep(spawn.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (c) => c.ticksToLive < 1300 }));
       }
     } else {
       let spawningCreep = Game.creeps[spawning.name];

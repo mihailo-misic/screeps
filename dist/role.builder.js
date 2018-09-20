@@ -1,14 +1,13 @@
 const startUpgrading = require('role.upgrader');
+// const startRepairing = require('role.repairer');
 
 // Builders: Builds > Upgrades
 module.exports = {
   run: function (creep, srcRoom = Memory.home, destRoom = Memory.home) {
     creep.checkEnergyOr('🏗');
 
-    // Pick up energy along the way.
-    const droppedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-    if (droppedEnergy) {
-      creep.pickup(droppedEnergy)
+    if (creep.memory.priority) {
+      return creep[creep.memory.priority]()
     }
 
     if (creep.memory.working) {

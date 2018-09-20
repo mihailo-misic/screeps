@@ -93,3 +93,12 @@ Creep.prototype.getDroppedEnergy = function () {
     this.memory.priority = null;
   }
 };
+
+Creep.prototype.goRefill = function () {
+  const closestSpawn = this.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_SPAWN });
+  if (this.ticksToLive <= 1200) {
+    this.moveTo(closestSpawn, { reusePath: 10, visualizePathStyle: { stroke: 'lime' } });
+  } else {
+    this.memory.priority = null;
+  }
+};
