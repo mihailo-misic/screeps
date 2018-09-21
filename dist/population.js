@@ -156,7 +156,7 @@ module.exports = {
         spawn.spawnCreep(genericBody, 'R' + suffix, { memory: { role: 'repairer', level: lvl } });
       }
       // Remote creeps
-      else if (roomsMissingReserver().length && energy >= reserverCost) {
+      else if (energy >= reserverCost && roomsMissingReserver().length) {
         let hisRoom = roomsMissingReserver()[0];
 
         if (spawn.spawnCreep(reserverBody, 'ReR' + suffix, {
@@ -167,7 +167,7 @@ module.exports = {
           hisRoom.reserver = true;
         }
       }
-      else if (roomsMissingDefender().length && energy >= defenderCost) {
+      else if (energy >= defenderCost && roomsMissingDefender().length) {
         let hisRoom = roomsMissingDefender()[0];
 
         if (spawn.spawnCreep(defenderBody, 'ReD' + suffix, {
@@ -178,7 +178,7 @@ module.exports = {
           hisRoom.defender = true;
         }
       }
-      else if (roomsMissingMiner().length && energy >= minerCost + 50) {
+      else if (energy >= minerCost + 50 && roomsMissingMiner().length) {
         let hisRoom = roomsMissingMiner()[0];
         const containers = Game.rooms[hisRoom.name].find(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_CONTAINER });
         let availableContainers = _.filter(containers, (c) => {
@@ -193,7 +193,7 @@ module.exports = {
           },
         });
       }
-      else if (roomsMissingCourier().length && energy >= remoteCourierCost) {
+      else if (energy >= remoteCourierCost && roomsMissingCourier().length ) {
         let hisRoom = roomsMissingCourier()[0];
 
         spawn.spawnCreep(remoteCourierBody, 'ReC' + suffix, {
