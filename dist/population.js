@@ -67,8 +67,9 @@ module.exports = {
     if (storage.length && storage[0].store[RESOURCE_ENERGY] < 10000) {
       lvl = lvl - 2
     }
-    if (lvl > 0 && !miners.length && spawn.room.energyAvailable < 500) {
-      lvl = 0
+    if (lvl > 0 && (miners.length < 1 || couriers.length < 1) && spawn.room.energyAvailable < 500) {
+      lvl = 0;
+      limits.harvesters = 3;
     }
 
     let workParts = Array(2 + lvl).fill(WORK);
@@ -144,7 +145,17 @@ module.exports = {
         spawn.spawnCreep(genericBody, 'H' + suffix, { memory: { role: 'harvester', level: lvl } });
       }
       else if (couriers < limits.couriers && energy >= courierCost) {
-        spawn.spawnCreep(courierBody, 'C' + suffix, { memory: { role: 'courier', level: lvl } });
+        let availableContainers = _.filter(containers, (c) => {
+          let available = true;
+          couriers.forEach(m => m.memory.target && m.memory.target.id === c.id ? available = false : available = true);
+          return available;
+        });
+
+        if (availableContainers.length > 0) {
+          spawn.spawnCreep(courierBody, 'C' + suffix, {
+            memory: { role: 'courier', level: lvl, target: availableContainers[0] },
+          });
+        }
       }
       else if (builders < limits.builders && energy >= genericCost) {
         spawn.spawnCreep(genericBody, 'B' + suffix, { memory: { role: 'builder', level: lvl } });
@@ -193,7 +204,7 @@ module.exports = {
           },
         });
       }
-      else if (energy >= remoteCourierCost && roomsMissingCourier().length ) {
+      else if (energy >= remoteCourierCost && roomsMissingCourier().length) {
         let hisRoom = roomsMissingCourier()[0];
 
         spawn.spawnCreep(remoteCourierBody, 'ReC' + suffix, {
@@ -297,7 +308,7 @@ let roomsMissingDefender = function () {
 let roomsMissingMiner = function () {
   return _.filter(Memory.rooms, (room) => {
     const roomObj = Game.rooms[room.name];
-    if (room.waiting || room.intent !== 'reserve' || roomObj === undefined || room.sources <= room.miners.length) {
+    if (room.wait || room.intent !== 'reserve' || roomObj === undefined || room.sources <= room.miners.length) {
       return false
     }
 
@@ -313,7 +324,7 @@ let roomsMissingMiner = function () {
 // 2. It has less couriers then miners
 let roomsMissingCourier = function () {
   return _.filter(Memory.rooms, (room) => {
-    if (room.waiting || room.intent !== 'reserve') {
+    if (room.wait || room.intent !== 'reserve') {
       return false
     }
 

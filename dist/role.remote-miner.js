@@ -9,16 +9,23 @@ module.exports = {
         creep.moveTo(creep.pos.findClosestByPath(FIND_SOURCES))
       } else {
         if (container.hits < container.hitsMax) {
-          creep.repair(container);
-        }
-
-        if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
+          if (creep.repair(container) === ERR_NOT_ENOUGH_RESOURCES) {
+            if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
+              creep.moveTo(container, {
+                reusePath: 20, visualizePathStyle: { stroke: 'yellow' },
+              })
+            }
+          }
+        } else if (container.store[RESOURCE_ENERGY] === container.storeCapacity) {
+          creep.say('🤔');
+        } else if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
           creep.moveTo(container, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
         } else if (creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_ENOUGH_RESOURCES) {
           creep.moveTo(container, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
         }
       }
-    } else {
+    }
+    else {
       creep.goToRoom(creep.memory.room)
     }
   },

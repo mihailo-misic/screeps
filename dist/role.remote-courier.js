@@ -40,7 +40,14 @@ module.exports = {
           containers.sort((a, b) => b.store[RESOURCE_ENERGY] - a.store[RESOURCE_ENERGY]);
           if (creep.withdraw(containers[0], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             creep.moveTo(containers[0], { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
-          } else if (creep.carry.energy === creep.carryCapacity) {
+          }
+          else if (containers[0].hits < containers[0].hitsMax && creep.carry.energy) {
+            creep.repair(containers[0]);
+          }
+          else if (creep.carry.energy === creep.carryCapacity) {
+            creep.memory.working = true;
+          } else if (creep.carry.energy &&
+              !_.find(Memory.rooms, { name: creep.memory.sourceRoom.name }).miners.length) {
             creep.memory.working = true;
           }
         } else {

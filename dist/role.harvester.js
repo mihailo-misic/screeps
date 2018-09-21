@@ -16,7 +16,17 @@ module.exports = {
         startBuilding.run(creep);
       }
     } else {
-      creep.getEnergy();
+      let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        filter: s => s.structureType === STRUCTURE_CONTAINER &&
+            s.store[RESOURCE_ENERGY] >= 100,
+      });
+      if (container) {
+        if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+          creep.moveTo(container, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
+        }
+      } else {
+        creep.getEnergy();
+      }
     }
   },
 };

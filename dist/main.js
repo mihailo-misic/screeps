@@ -14,10 +14,6 @@ const roles = {
   'remote-defender': require('role.remote-defender'),
 };
 
-/* TODO:
-1. Rework how home couriers work
-*/
-
 const pop = require('population');
 const stats = require('stats');
 
@@ -59,6 +55,26 @@ module.exports.loop = function () {
 
   // Make em work!
   Object.values(Game.creeps).forEach(creep => roles[creep.memory.role].run(creep));
+
+  // Room priority logic
+  Object.entries(Memory.rooms).forEach(([key, room]) => {
+    if (!room.wait && room.intent === 'reserve') {
+      if (!room.defender ||
+          room.miners.length < room.sources ||
+          room.couriers.length < room.sources) {
+        for (let i = key + 1; i < Memory.rooms.length; i++) {
+          if (Memory.rooms[i] && !Memory.rooms[key + 1].wait && Memory.rooms[i].intent === 'reserve') {
+            Memory.rooms[i].wait = true;
+          }
+        }
+      } else {
+        let nextRoom = Memory.rooms[parseInt(key) + 1];
+        if (nextRoom && nextRoom.wait && nextRoom.intent === 'reserve') {
+          nextRoom.wait = false;
+        }
+      }
+    }
+  });
 
   // Towers engage!
   _.filter(Game.structures, s => s.structureType === STRUCTURE_TOWER)
