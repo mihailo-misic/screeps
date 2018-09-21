@@ -1,6 +1,6 @@
-const startBuilding = require('role.builder');
+const startUpgrading = require('role.upgrader');
 
-// Repairers: Repairs > Builds > Upgrades
+// Repairers: Repairs > Upgrades
 module.exports = {
   run: function (creep) {
     creep.checkEnergyOr('🛠');
@@ -18,11 +18,11 @@ module.exports = {
       }
       if (target) {
         if (creep.repair(target) === ERR_NOT_IN_RANGE) {
-          creep.moveTo(target, { reusePath: 10, visualizePathStyle: { stroke: 'cyan' } });
+          creep.moveTo(target, { reusePath: 20, visualizePathStyle: { stroke: 'cyan' } });
         }
       } else {
         // Don't be useless start building!
-        // startBuilding.run(creep);
+        startUpgrading.run(creep);
       }
     } else {
       creep.getEnergy();

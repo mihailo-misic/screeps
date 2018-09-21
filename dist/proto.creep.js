@@ -9,7 +9,7 @@ Creep.prototype.getEnergy = function (room = Memory.home) {
 
     if (source) {
       if (this.withdraw(source, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-        this.moveTo(source, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
+        this.moveTo(source, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
       } else {
         this.memory.working = true;
       }
@@ -19,7 +19,7 @@ Creep.prototype.getEnergy = function (room = Memory.home) {
         this.memory.working = true;
       }
       if (this.harvest(source) === ERR_NOT_IN_RANGE) {
-        this.moveTo(source, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
+        this.moveTo(source, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
       }
     }
   } else {
@@ -81,14 +81,14 @@ Creep.prototype.checkEnergyOr = function (msg) {
 
 Creep.prototype.goToRoom = function (room) {
   this.moveTo(this.pos.findClosestByRange(this.room.findExitTo(room.name)), {
-    reusePath: 10, visualizePathStyle: { stroke: 'lime' },
+    reusePath: 20, visualizePathStyle: { stroke: 'lime' },
   })
 };
 
 Creep.prototype.getDroppedEnergy = function () {
   const droppedEnergy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
   if (this.pickup(droppedEnergy) === ERR_NOT_IN_RANGE) {
-    this.moveTo(droppedEnergy, { reusePath: 10, visualizePathStyle: { stroke: 'white' } });
+    this.moveTo(droppedEnergy, { reusePath: 20, visualizePathStyle: { stroke: 'white' } });
   } else {
     this.memory.priority = null;
   }
@@ -97,7 +97,7 @@ Creep.prototype.getDroppedEnergy = function () {
 Creep.prototype.goRefill = function () {
   const closestSpawn = this.pos.findClosestByPath(FIND_STRUCTURES, { filter: (s) => s.structureType === STRUCTURE_SPAWN });
   if (this.ticksToLive <= 1200) {
-    this.moveTo(closestSpawn, { reusePath: 10, visualizePathStyle: { stroke: 'lime' } });
+    this.moveTo(closestSpawn, { reusePath: 20, visualizePathStyle: { stroke: 'lime' } });
   } else {
     this.memory.priority = null;
   }

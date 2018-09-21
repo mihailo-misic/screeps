@@ -14,14 +14,40 @@ const roles = {
   'remote-defender': require('role.remote-defender'),
 };
 
+/* TODO:
+1. Rework how home couriers work
+*/
+
 const pop = require('population');
 const stats = require('stats');
 
-if (!Memory.rooms) {
-  Memory.rooms = [
-    { name: 'W52N51', intent: 'reserve', reserver: false, defender: false, sources: 1, miners: [], courier: false },
-    { name: 'W51N52', intent: 'reserve', reserver: false, defender: false, sources: 1, miners: [], courier: false },
-  ];
+const rooms = [
+  {
+    name    : 'W52N51',
+    intent  : 'reserve', wait: true, isSafe: true,
+    reserver: false,
+    defender: false,
+    sources : 1,
+    miners  : [],
+    couriers: [],
+  },
+  {
+    name    : 'W51N52',
+    intent  : 'reserve', wait: true, isSafe: true,
+    reserver: false,
+    defender: false,
+    sources : 1,
+    miners  : [],
+    couriers: [],
+  },
+];
+
+if (Memory.rooms.length !== rooms.length) {
+  rooms.forEach(room => {
+    if (_.find(Memory.rooms, r => r.name === room.name) === -1) {
+      Memory.rooms.push(room);
+    }
+  });
 }
 
 module.exports.loop = function () {
@@ -32,15 +58,7 @@ module.exports.loop = function () {
   pop.breedFrom(Game.spawns['Spawn1']);
 
   // Make em work!
-  for (let name in Game.creeps) {
-    let creep = Game.creeps[name];
-    // Command the builders
-    if (Memory.rooms.length && creep.memory.role === 'builder') {
-      roles[creep.memory.role].run(creep, Memory.home, Memory.home);
-      continue
-    }
-    roles[creep.memory.role].run(creep);
-  }
+  Object.values(Game.creeps).forEach(creep => roles[creep.memory.role].run(creep));
 
   // Towers engage!
   _.filter(Game.structures, s => s.structureType === STRUCTURE_TOWER)

@@ -5,7 +5,7 @@ module.exports = {
     })[0];
 
     if (container && creep.harvest(container.pos.findClosestByPath(FIND_SOURCES)) === ERR_NOT_IN_RANGE) {
-      creep.moveTo(container, { reusePath: 10, visualizePathStyle: { stroke: 'yellow' } });
+      creep.moveTo(container, { reusePath: 20, visualizePathStyle: { stroke: 'yellow' } });
     }
   },
 };
