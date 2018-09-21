@@ -8,9 +8,10 @@ module.exports = {
 
     if (creep.memory.working) {
       if (creep.room.name === creep.memory.depositRoom.name) {
-        if (creep.ticksToLive < 900) {
-          creep.memory.priority = 'goRefill';
-        }
+        // Makes issues
+        // if (creep.ticksToLive < 900) {
+        //   creep.memory.priority = 'goRefill';
+        // }
 
         // Deposit to empty structure
         let target = creep.findDepletedStructure();
@@ -22,7 +23,7 @@ module.exports = {
       } else {
         // Fix the road along the way
         let target = creep.pos.findClosestByPath(FIND_STRUCTURES,
-            { filter: (s) => s.hits < s.hitsMax && s.structureType !== STRUCTURE_WALL },
+            { filter: (s) => s.hits < s.hitsMax && (s.structureType !== STRUCTURE_WALL && s.structureType !== STRUCTURE_RAMPART) },
         );
         if (target) {
           creep.repair(target)
