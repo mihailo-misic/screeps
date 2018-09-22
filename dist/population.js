@@ -61,7 +61,7 @@ module.exports = {
     const upgraders = _.filter(Game.creeps, c => c.memory.role === 'upgrader').length;
     const repairers = _.filter(Game.creeps, c => c.memory.role === 'repairer').length;
     const miners = _.filter(Game.creeps, c => c.memory.role === 'miner');
-    const couriers = _.filter(Game.creeps, c => c.memory.role === 'courier').length;
+    const couriers = _.filter(Game.creeps, c => c.memory.role === 'courier');
 
     let lvl = Math.floor((energy - 300) / 250);
     if (storage.length && storage[0].store[RESOURCE_ENERGY] < 10000) {
@@ -144,7 +144,7 @@ module.exports = {
       else if (harvesters < limits.harvesters && energy >= genericCost) {
         spawn.spawnCreep(genericBody, 'H' + suffix, { memory: { role: 'harvester', level: lvl } });
       }
-      else if (couriers < limits.couriers && energy >= courierCost) {
+      else if (couriers.length < limits.couriers && energy >= courierCost) {
         let availableContainers = _.filter(containers, (c) => {
           let available = true;
           couriers.forEach(m => m.memory.target && m.memory.target.id === c.id ? available = false : available = true);

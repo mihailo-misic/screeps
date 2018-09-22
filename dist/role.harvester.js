@@ -18,7 +18,7 @@ module.exports = {
     } else {
       let container = creep.pos.findClosestByPath(FIND_STRUCTURES, {
         filter: s => s.structureType === STRUCTURE_CONTAINER &&
-            s.store[RESOURCE_ENERGY] >= 100,
+            s.store[RESOURCE_ENERGY] >= 150,
       });
       if (container) {
         if (creep.withdraw(container, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {

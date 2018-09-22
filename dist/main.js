@@ -62,8 +62,8 @@ module.exports.loop = function () {
       if (!room.defender ||
           room.miners.length < room.sources ||
           room.couriers.length < room.sources) {
-        for (let i = key + 1; i < Memory.rooms.length; i++) {
-          if (Memory.rooms[i] && !Memory.rooms[key + 1].wait && Memory.rooms[i].intent === 'reserve') {
+        for (let i = parseInt(key) + 1; i < Memory.rooms.length; i++) {
+          if (Memory.rooms[i] && !Memory.rooms[i].wait && Memory.rooms[i].intent === 'reserve') {
             Memory.rooms[i].wait = true;
           }
         }
