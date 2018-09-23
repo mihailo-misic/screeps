@@ -107,7 +107,13 @@ module.exports = {
     const pm = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
     const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
     const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
-    const defenderBody = [...Array(5).fill(TOUGH), ...Array(5).fill(ATTACK), HEAL, ...Array(11).fill(MOVE)];
+    const defenderBody = [
+      ...Array(5).fill(TOUGH),
+      ...Array(5).fill(MOVE),
+      ...Array(4).fill(ATTACK),
+      ...Array(6).fill(MOVE),
+      ATTACK, HEAL,
+    ];
     let rpm = Math.floor((energy - 150) / 3 / 50);
     rpm = rpm < 20 ? rpm : 20;
     const remoteCourierBody = [...Array(rpm * 2).fill(CARRY), ...Array(rpm).fill(MOVE), ...[WORK, MOVE]];
@@ -120,7 +126,7 @@ module.exports = {
     const courierCost = calculateCost(courierBody); // 900 // 1250 (remote)
     const reserverCost = calculateCost(reserverBody); // 1300
     const defenderCost = calculateCost(defenderBody); // 1250
-    const remoteCourierCost = calculateCost(remoteCourierBody);
+    const remoteCourierCost = calculateCost(remoteCourierBody); // 1200 - 3150
 
     const { spawning } = spawn;
     if (!spawning) {
@@ -213,7 +219,11 @@ module.exports = {
           },
         });
       } else {
-        spawn.renewCreep(spawn.pos.findClosestByPath(FIND_MY_CREEPS, { filter: (c) => c.ticksToLive < 1000 }));
+        spawn.renewCreep(spawn.pos.findClosestByPath(FIND_MY_CREEPS, {
+          filter: (c) => {
+            return c.memory.role === 'remote-courier' && c.ticksToLive < 1000
+          },
+        }));
       }
     } else {
       let spawningCreep = Game.creeps[spawning.name];
