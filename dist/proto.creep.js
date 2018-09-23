@@ -44,7 +44,7 @@ Creep.prototype.findDepletedStructure = function (ignoreStorage) {
       if (s.structureType === STRUCTURE_TOWER &&
           this.memory.busyWithTower && this.memory.busyWithTower.id === s.id) {
         // Fill it with energy until it's full, and leave it be afterwords.
-        this.memory.busyWithTower = s.energy < s.energyCapacity ? s : null;
+        this.memory.busyWithTower = s.energy < s.energyCapacity - 20 ? s : null;
         return this.memory.busyWithTower;
       }
 

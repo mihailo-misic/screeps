@@ -104,7 +104,7 @@ module.exports = {
     // Constructing bodies
     const genericBody = [...workParts, ...carryParts, ...moveParts];
     const minerBody = [...Array(5).fill(WORK), ...Array(3).fill(MOVE)];
-    const pm = Math.floor(energy / 3 / 50) > 6 ? 6 : Math.floor(energy / 3 / 50);
+    const pm = Math.floor(energy / 3 / 50) > 5 ? 5 : Math.floor(energy / 3 / 50);
     const courierBody = [...Array(pm * 2).fill(CARRY), ...Array(pm).fill(MOVE)];
     const reserverBody = [...Array(2).fill(CLAIM), ...Array(2).fill(MOVE)];
     const defenderBody = [
@@ -114,8 +114,7 @@ module.exports = {
       ...Array(6).fill(MOVE),
       ATTACK, HEAL,
     ];
-    let rpm = Math.floor((energy - 150) / 3 / 50);
-    rpm = rpm < 20 ? rpm : 20;
+    const rpm = Math.floor((energy - 150) / 3 / 50) > 12 ? 12 : Math.floor((energy - 150) / 3 / 50);
     const remoteCourierBody = [...Array(rpm * 2).fill(CARRY), ...Array(rpm).fill(MOVE), ...[WORK, MOVE]];
 
     // Calculating their cost
@@ -126,7 +125,7 @@ module.exports = {
     const courierCost = calculateCost(courierBody); // 900 // 1250 (remote)
     const reserverCost = calculateCost(reserverBody); // 1300
     const defenderCost = calculateCost(defenderBody); // 1250
-    const remoteCourierCost = calculateCost(remoteCourierBody); // 1200 - 3150
+    const remoteCourierCost = calculateCost(remoteCourierBody); // 1200 - 1950
 
     const { spawning } = spawn;
     if (!spawning) {
