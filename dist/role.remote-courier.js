@@ -44,10 +44,10 @@ module.exports = {
           else if (containers[0].hits < containers[0].hitsMax && creep.carry.energy) {
             creep.repair(containers[0]);
           }
-          else if (creep.carry.energy === creep.carryCapacity) {
-            creep.memory.working = true;
-          } else if (creep.carry.energy &&
-              !_.find(Memory.rooms, { name: creep.memory.sourceRoom.name }).miners.length) {
+          else if (creep.carry.energy === creep.carryCapacity || (
+              creep.carry.energy &&
+              !_.find(Memory.rooms, { name: creep.memory.sourceRoom.name }).miners.length
+          )) {
             creep.memory.working = true;
           }
         } else {

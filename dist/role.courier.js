@@ -22,8 +22,7 @@ module.exports = {
 
       if (creep.carry.energy === creep.carryCapacity || (
           creep.carry.energy > creep.carryCapacity / 2 &&
-          container.store[RESOURCE_ENERGY] < 100 &&
-          container.pos.findClosestByPath(FIND_SOURCES)
+          container.store[RESOURCE_ENERGY] < 100
       )) {
         creep.memory.working = true;
       } else if (creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)) {
