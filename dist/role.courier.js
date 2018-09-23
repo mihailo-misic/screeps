@@ -20,10 +20,7 @@ module.exports = {
         filter: (s) => s.structureType === STRUCTURE_CONTAINER && s.id === creep.memory.target.id,
       })[0];
 
-      if (creep.carry.energy === creep.carryCapacity || (
-          creep.carry.energy > creep.carryCapacity / 2 &&
-          container.store[RESOURCE_ENERGY] < 100
-      )) {
+      if (creep.carry.energy > creep.carryCapacity / 2 && container.store[RESOURCE_ENERGY] < 100) {
         creep.memory.working = true;
       } else if (creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES)) {
         creep.getDroppedEnergy();

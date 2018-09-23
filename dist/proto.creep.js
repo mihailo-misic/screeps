@@ -37,15 +37,9 @@ Creep.prototype.findDepletedStructure = function (ignoreStorage) {
         return true;
       }
       // This prevents the creep from feeding the tower for each shot
-      if (s.structureType === STRUCTURE_TOWER && s.energy < (s.energyCapacity / 2)) {
+      if (s.structureType === STRUCTURE_TOWER) {
         // It starts filling it if it's below 50% energy.
-        this.memory.busyWithTower = s;
-      }
-      if (s.structureType === STRUCTURE_TOWER &&
-          this.memory.busyWithTower && this.memory.busyWithTower.id === s.id) {
-        // Fill it with energy until it's full, and leave it be afterwords.
-        this.memory.busyWithTower = s.energy < s.energyCapacity - 20 ? s : null;
-        return this.memory.busyWithTower;
+        return s.energy < (s.energyCapacity / 2);
       }
 
       return false;
